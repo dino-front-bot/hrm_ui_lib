@@ -116,8 +116,8 @@ export const OptionsWrapper = (props: TProps): ReactElement => {
       selectedValues={selectedValues}
       onItemSelect={onItemSelect}
       onItemDeselect={onItemDeselect}
-      toggleDropdown={toggleDropdown}
       setSelectedValues={setSelectedValues}
+      closeDropdown={() => setIsOpen(false)}
       checkIsValueOverflowed={checkIsValueOverflowed}
       isSearchAvailable={optionsCount > SELECTED_VISIBLE_MIN_COUNT}
       scrollableContentStyle={{

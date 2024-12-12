@@ -4,10 +4,13 @@ import { OptionItem } from '../../../../helperComponents'
 import { ContentTop } from '../../SharedComponents'
 import { TMultySingleTabPropTypes } from '../../types'
 import { FixedSizeList as List } from 'react-window'
-import { DROPDOWN_HEIGHT, DROPDOWN_WIDTH, ITEM_SIZE } from '../../constants'
+import { DROPDOWN_HEIGHT, DROPDOWN_WIDTH, ITEM_SIZE, ITEM_SIZE_MOBILE } from '../../constants'
+import { useIsMobile } from '../../../../hooks/useGetIsMobile'
+import classNames from 'classnames'
 
 export const MultiBase = (props: TMultySingleTabPropTypes): ReactElement | null => {
   const {
+    closeDropdown,
     avatar,
     scrollableContentStyle,
     options,
@@ -81,9 +84,11 @@ export const MultiBase = (props: TMultySingleTabPropTypes): ReactElement | null 
     }
   }, [avatar, labelLeftIconProps, optionRightIconComponent, labelRightIconComponent])
 
+  const isMobile = useIsMobile()
   return (
     <>
       <ContentTop
+        closeDropdown={closeDropdown}
         dataIdPrefix={dataIdPrefix}
         menuOptions={menuOptions}
         selectAll={selectAll}
@@ -98,13 +103,18 @@ export const MultiBase = (props: TMultySingleTabPropTypes): ReactElement | null 
         translations={translations}
       />
 
-      <div className={'select__options__scroll scrollbar'} style={scrollableContentStyle}>
+      <div
+        className={classNames('select__options__scroll scrollbar', {
+          select__options__scroll_mobile: isMobile
+        })}
+        style={scrollableContentStyle}
+      >
         {filteredData.length > 0 && (
           <List
-            height={DROPDOWN_HEIGHT}
+            height={isMobile ? window.innerHeight - 80 - 73 - 24 : DROPDOWN_HEIGHT}
             itemCount={filteredData.length}
-            itemSize={ITEM_SIZE}
-            width={dropdownWidth || DROPDOWN_WIDTH}
+            itemSize={isMobile ? ITEM_SIZE_MOBILE : ITEM_SIZE}
+            width={isMobile ? window.innerWidth : dropdownWidth || DROPDOWN_WIDTH}
             style={{ width: dropdownWidth || '100%' }}
           >
             {({ index, style }) => {
@@ -112,6 +122,7 @@ export const MultiBase = (props: TMultySingleTabPropTypes): ReactElement | null 
               const isSelected = checkIsSelected(item.value)
               return (
                 <OptionItem
+                  size={isMobile ? 'large' : 'small'}
                   data={item}
                   dataId={item.dataId}
                   onClick={isSelected ? onDeselect : onItemSelect}

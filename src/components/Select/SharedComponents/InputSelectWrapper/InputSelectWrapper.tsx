@@ -1,19 +1,16 @@
 import React, { ReactElement, useCallback, useMemo, useRef } from 'react'
 import classNames from 'classnames'
 import { Input } from '../../../Input'
-import {
-  useGetElemSizes,
-  useGetElemPositions,
-  useGetHasBottomSpace,
-  useGetHasTopSpace
-} from '../../../../hooks'
+import { useGetElemSizes, useGetHasBottomSpace } from '../../../../hooks'
 import { getStringWidth, noop, setTranslationValue } from '../../../../utils/helpers'
 
 import { useChangePositionsOnScroll } from '../../../../hooks/useChangePositionsOnScroll'
 import { IconCaretDownFilled } from '../../../SVGIcons/IconCaretDownFilled'
 import { IconCaretUpFilled } from '../../../SVGIcons/IconCaretUpFilled'
 import { TSelectWrapperProps } from '../../types'
-import { DROPDOWN_AND_INPUT_GAP } from '../../../../consts'
+import { useIsMobile } from '../../../../hooks/useGetIsMobile'
+import { MobileWrapper } from '../../MultiSelect/MobileWrapper'
+import { DesktopWrapper } from '../../MultiSelect/DesktopWrapper'
 
 export const InputSelectWrapper = (props: TSelectWrapperProps): ReactElement | null => {
   const {
@@ -36,7 +33,8 @@ export const InputSelectWrapper = (props: TSelectWrapperProps): ReactElement | n
     selectedValues,
     setContainerRef,
     overflowText,
-    hasError
+    hasError,
+    modalApplyButtonText
   } = props
 
   const inputRef = useRef<HTMLInputElement | null>(null)
@@ -78,20 +76,14 @@ export const InputSelectWrapper = (props: TSelectWrapperProps): ReactElement | n
       : joinedLabel
   }, [options, selectedValues, checkIsValueOverflowed])
 
-  const { bottom, left, top, right } = useGetElemPositions(inputRef.current)
-  const { width: containerWidth } = useGetElemSizes(containerRef)
-
   const { hasBottomSpace } = useGetHasBottomSpace({
     element: dropdownRef,
     input: inputRef.current
   })
 
-  const hasTopSpace = useGetHasTopSpace({
-    element: dropdownRef,
-    input: inputRef.current
-  })
-
   useChangePositionsOnScroll(inputRef?.current, dropdownRef, hasBottomSpace)
+
+  const isMobile = useIsMobile()
 
   return (
     <div className={classNames('select select--multi', className)} ref={setContainerRef}>
@@ -116,20 +108,26 @@ export const InputSelectWrapper = (props: TSelectWrapperProps): ReactElement | n
       </div>
 
       <>
-        {isOpen && (
-          <div
-            className="select__options"
-            ref={setDropdownRef}
-            style={{
-              left: align === 'left' ? left : right - (dropdownWidth || containerWidth),
-              width: dropdownWidth || containerWidth,
-              ...(hasBottomSpace || !hasTopSpace
-                ? { top: bottom }
-                : { bottom: window.innerHeight - top + DROPDOWN_AND_INPUT_GAP })
-            }}
+        {isMobile ? (
+          <MobileWrapper
+            isOpen={isOpen}
+            closeDrodown={() => setIsOpen(false)}
+            modalApplyButtonText={modalApplyButtonText}
           >
             {children}
-          </div>
+          </MobileWrapper>
+        ) : (
+          <DesktopWrapper
+            setDropdownRef={setDropdownRef}
+            isOpen={isOpen}
+            align={align}
+            dropdownWidth={dropdownWidth}
+            inputRef={inputRef.current}
+            dropdownRef={dropdownRef}
+            containerRef={containerRef}
+          >
+            {children}
+          </DesktopWrapper>
         )}
       </>
     </div>

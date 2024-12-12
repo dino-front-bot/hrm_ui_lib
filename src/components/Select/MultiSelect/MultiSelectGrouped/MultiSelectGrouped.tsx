@@ -9,6 +9,8 @@ import { TMultiSelectGroupedProps } from '../../types'
 import { DROPDOWN_MAX_HEIGHT } from '../../constants'
 import IconCaretUpFilled from '../../../SVGIcons/IconCaretUpFilled'
 import IconCaretDownFilled from '../../../SVGIcons/IconCaretDownFilled'
+import classNames from 'classnames'
+import { useIsMobile } from '../../../../hooks/useGetIsMobile'
 
 export const MultiSelectGrouped = (props: TMultiSelectGroupedProps): React.ReactElement | null => {
   const {
@@ -27,7 +29,8 @@ export const MultiSelectGrouped = (props: TMultiSelectGroupedProps): React.React
     labelRightIconComponent,
     maxSelectCount,
     menuOptions,
-    dataIdPrefix
+    dataIdPrefix,
+    closeDropdown
   } = props
 
   const { emptyListMainMessage, emptyListSecondaryMessage } = translations
@@ -127,13 +130,16 @@ export const MultiSelectGrouped = (props: TMultiSelectGroupedProps): React.React
     }
   }, [avatar, labelLeftIconProps, optionRightIconComponent, labelRightIconComponent])
   const hasTopContent = isSearchAvailable || helperText
+
+  const isMobile = useIsMobile()
   return (
     <>
       {hasTopContent ? (
         <ContentTop
+          closeDropdown={closeDropdown}
           dataIdPrefix={dataIdPrefix}
           menuOptions={menuOptions}
-          isSearchAvailable={isSearchAvailable}
+          isSearchAvailable={isSearchAvailable || isMobile}
           hasLimitation={!!maxSelectCount}
           selectAll={selectAll}
           clearAll={clearAll}

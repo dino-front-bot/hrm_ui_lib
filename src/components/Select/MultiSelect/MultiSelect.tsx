@@ -5,6 +5,7 @@ import { Footer, InputSelectWrapper, ButtonSelectWrapper } from '../SharedCompon
 import { useOnOutsideClick } from '../../../hooks'
 import { TRANSLATIONS_DEFAULT_VALUES } from '../constants'
 import { TMultiSelectPropTypes } from '../types'
+import { useIsMobile } from '../../../hooks/useGetIsMobile'
 
 export const MultiSelect = (props: TMultiSelectPropTypes): ReactElement => {
   const {
@@ -96,6 +97,7 @@ export const MultiSelect = (props: TMultiSelectPropTypes): ReactElement => {
   const localizations = { ...TRANSLATIONS_DEFAULT_VALUES, ...translations }
 
   const { overflowText } = localizations
+  const isMobile = useIsMobile()
   return (
     <WrapperComponent
       dropdownRef={dropdownRef}
@@ -133,7 +135,7 @@ export const MultiSelect = (props: TMultiSelectPropTypes): ReactElement => {
           dropdownWidth={dropdownWidth}
           {...rest}
         />
-        {options.length ? (
+        {options.length && !isMobile ? (
           <Footer
             checkboxInfo={checkboxInfo}
             hasChange={hasChange}

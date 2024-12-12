@@ -25,7 +25,8 @@ export const MultiSelectWithTabs = (props: TMultiSelectGroupedProps): React.Reac
     isSearchAvailable,
     maxSelectCount,
     menuOptions,
-    dataIdPrefix
+    dataIdPrefix,
+    closeDropdown
   } = props
 
   const { emptyListMainMessage, emptyListSecondaryMessage } = translations
@@ -112,6 +113,7 @@ export const MultiSelectWithTabs = (props: TMultiSelectGroupedProps): React.Reac
         {<Tab selectedValue={activeTab} tabItems={tabs} onSelect={onTabSelect} size="small" />}
       </div>
       <ContentTop
+        closeDropdown={closeDropdown}
         dataIdPrefix={dataIdPrefix}
         menuOptions={menuOptions}
         isSearchAvailable={isSearchAvailable}

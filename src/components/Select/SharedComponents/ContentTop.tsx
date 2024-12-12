@@ -7,6 +7,8 @@ import { Actions } from './Actions'
 import IconDismissFilled from '../../SVGIcons/IconDismissFilled'
 import IconSearchFilled from '../../SVGIcons/IconSearchFilled'
 import IconSelectAllOff from '../../SVGIcons/IconSelectAllOff'
+import { useIsMobile } from '../../../hooks/useGetIsMobile'
+import { IconChevronLeft } from '../../SVGIcons'
 
 type TProps = {
   searchValue?: string
@@ -21,6 +23,7 @@ type TProps = {
   hasLimitation?: boolean
   menuOptions?: TMenuItem[]
   dataIdPrefix?: string
+  closeDropdown?: () => void
 }
 
 export const ContentTop = React.memo<TProps>((props: TProps): React.ReactElement => {
@@ -36,7 +39,8 @@ export const ContentTop = React.memo<TProps>((props: TProps): React.ReactElement
     hasLimitation = false,
     isSelectAllDisabled = false,
     menuOptions = [],
-    dataIdPrefix
+    dataIdPrefix,
+    closeDropdown
   } = props
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -92,28 +96,35 @@ export const ContentTop = React.memo<TProps>((props: TProps): React.ReactElement
     }
   }, [inputRef])
 
+  const onBack = () => {
+    closeDropdown && closeDropdown()
+  }
+  const isMobile = useIsMobile()
   return (
     <div className="content-top">
-      {helperText ? (
+      {helperText && !isMobile ? (
         <Text size="xsmall" type="secondary" className="content-top__label">
           {helperText}
         </Text>
       ) : null}
-      {isSearchAvailable && (
-        <Input
-          ref={inputRef}
-          className="content-top__search"
-          size="small"
-          placeholder={searchInputPlaceHolder}
-          handleChange={onSearch}
-          currentValue={searchValue}
-          rightIconProps={{
-            Component: searchValue ? IconDismissFilled : IconSearchFilled,
-            size: searchValue ? 'xsmall' : 'small',
-            onClick: removeFilter
-          }}
-        />
-      )}
+      <div className="flexbox search-container">
+        {isMobile && <IconChevronLeft onClick={onBack} size="large" />}
+        {isSearchAvailable && (
+          <Input
+            ref={inputRef}
+            className="content-top__search"
+            size="small"
+            placeholder={searchInputPlaceHolder}
+            handleChange={onSearch}
+            currentValue={searchValue}
+            rightIconProps={{
+              Component: searchValue ? IconDismissFilled : IconSearchFilled,
+              size: searchValue ? 'xsmall' : 'small',
+              onClick: removeFilter
+            }}
+          />
+        )}
+      </div>
 
       <Actions selectActions={selectActions} innerLabel={innerLabel} />
     </div>

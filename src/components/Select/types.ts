@@ -62,6 +62,7 @@ interface TMultiSelectCompProps extends IFormCompProps, TSelectBaseProps {
   onItemSelect: (item: TSelectedValue) => void
   onItemDeselect: (item: TSelectedValue) => void
   menuOptions?: TMenuItem[]
+  closeDropdown: () => void
 }
 
 export interface TMultySingleTabPropTypes extends TMultiSelectCompProps {
@@ -261,6 +262,7 @@ export type TSelectWrapperProps = {
   selectedValues?: TSelectedValue[]
   dataId?: string
   type?: 'primary' | 'secondary' | 'tertiary'
+  modalApplyButtonText?: string
 }
 
 declare type TNavItemValue = {
